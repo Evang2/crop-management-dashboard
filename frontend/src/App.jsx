@@ -257,55 +257,62 @@ function App() {
         </ResponsiveContainer>
       </div>
 
-      {/* Recommended Crop Section */}
-      <div className="text-center">
-        <h2 className="sub-heading">🌾 Recommended Crop</h2>
-        {recommendedCrop ? (
-          <p className="text-lg">{recommendedCrop}</p>
-        ) : (
-          <p>Loading prediction...</p>
-        )}
-      </div>
+      {/* Cards for Recommended Crop and Watering Advice */}
+      <div className="card-container2">
+        {/* Recommended Crop Section */}
+        <div className="card2">
+          <h2 className="sub-heading">🌾 Recommended Crop</h2>
+          {recommendedCrop ? (
+            <p className="text-lg">{recommendedCrop}</p>
+          ) : (
+            <p>Loading prediction...</p>
+          )}
+        </div>
 
-      {/* Watering Advice Section */}
-      <div className="text-center">
-        <h2 className="sub-heading">🚰 Watering Advice</h2>
-        {sensorData.soilMoisture < 41 ? (
-          <p className="warning-text">
-            ⚠️ Soil moisture is too low! You need to water the crop.
-          </p>
-        ) : (
-          <p className="healthy-text">
-            ✅ Soil moisture is at a healthy level.
-          </p>
-        )}
+        {/* Watering Advice Section */}
+        <div className="card2">
+          <h2 className="sub-heading">🚰 Watering Advice</h2>
+          {sensorData.soilMoisture < 41 ? (
+            <p className="warning-text">
+              ⚠️ Soil moisture is too low! You need to water the crop.
+            </p>
+          ) : (
+            <p className="healthy-text">
+              ✅ Soil moisture is at a healthy level.
+            </p>
+          )}
+        </div>
       </div>
 
       {/* Crop Selection Section */}
-      <div className="text-center">
-        <h2 className="sub-heading">🌿 Choose a Crop</h2>
-        <select
-          onChange={(e) => setSelectedCrop(e.target.value)}
-          value={selectedCrop}
-          className="select-box"
-        >
-          <option value="">-- Select a Crop --</option>
-          {Object.keys(cropIdealConditions).map((crop) => (
-            <option key={crop} value={crop}>
-              {crop}
-            </option>
-          ))}
-        </select>
+      <div className="card-container2">
+        <div className="card2">
+          <h2 className="sub-heading">🌿 Choose a Crop</h2>
+          <select
+            onChange={(e) => setSelectedCrop(e.target.value)}
+            value={selectedCrop}
+            className="select-box"
+          >
+            <option value="">-- Select a Crop --</option>
+            {Object.keys(cropIdealConditions).map((crop) => (
+              <option key={crop} value={crop}>
+                {crop}
+              </option>
+            ))}
+          </select>
 
-        <Button onClick={calculateAdjustments} className="button">
-          Get Adjustments
-        </Button>
+          <Button onClick={calculateAdjustments} className="button">
+            Get Adjustments
+          </Button>
+        </div>
+
+        {/* Display Adjustments */}
+        {adjustments && (
+          <p className="adjustments">
+            <b>🔧 Adjustments:</b> {adjustments}
+          </p>
+        )}
       </div>
-
-      {/* Display Adjustments */}
-      {adjustments && (
-        <p className="adjustments">🔧 Adjustments: {adjustments}</p>
-      )}
     </div>
   );
 }
