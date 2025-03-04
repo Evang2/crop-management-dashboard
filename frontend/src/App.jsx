@@ -65,42 +65,152 @@ function App() {
     }
 
     const ideal = cropIdealConditions[selectedCrop];
+    if (
+      !ideal.N ||
+      !ideal.P ||
+      !ideal.K ||
+      !ideal.temperature ||
+      !ideal.humidity
+    ) {
+      setAdjustments("Incomplete crop data. Unable to calculate adjustments.");
+      return;
+    }
+
     const suggestions = [];
     const idealValues = {
-      N: [ideal.N.min, ideal.N.max],
-      P: [ideal.P.min, ideal.P.max],
-      K: [ideal.K.min, ideal.K.max],
-      temperature: [ideal.temperature.min, ideal.temperature.max],
-      humidity: [ideal.humidity.min, ideal.humidity.max],
+      N: ideal.N,
+      P: ideal.P,
+      K: ideal.K,
+      temperature: ideal.temperature,
+      humidity: ideal.humidity,
     };
+    // Nitrogen (N)
+    if (sensorData.N < idealValues.N.min) {
+      suggestions.push(
+        `Increase Nitrogen: Current level is ${sensorData.N.toFixed(
+          2
+        )}%. Ideal range: ${idealValues.N.min.toFixed(
+          2
+        )}% - ${idealValues.N.max.toFixed(
+          2
+        )}%. Consider adding a nitrogen-rich fertilizer.`
+      );
+    }
+    if (sensorData.N > idealValues.N.max) {
+      suggestions.push(
+        `Decrease Nitrogen: Current level is ${sensorData.N.toFixed(
+          2
+        )}%. Ideal range: ${idealValues.N.min.toFixed(
+          2
+        )}% - ${idealValues.N.max.toFixed(
+          2
+        )}%. Consider using a nitrogen-fixing cover crop.`
+      );
+    }
 
-    if (sensorData.N < idealValues.N[0]) suggestions.push("Increase Nitrogen.");
-    if (sensorData.N > idealValues.N[1]) suggestions.push("Decrease Nitrogen.");
+    // Phosphorus (P)
+    if (sensorData.P < idealValues.P.min) {
+      suggestions.push(
+        `Increase Phosphorus: Current level is ${sensorData.P.toFixed(
+          2
+        )}%. Ideal range: ${idealValues.P.min.toFixed(
+          2
+        )}% - ${idealValues.P.max.toFixed(
+          2
+        )}%. Consider applying a phosphorus-rich fertilizer.`
+      );
+    }
+    if (sensorData.P > idealValues.P.max) {
+      suggestions.push(
+        `Decrease Phosphorus: Current level is ${sensorData.P.toFixed(
+          2
+        )}%. Ideal range: ${idealValues.P.min.toFixed(
+          2
+        )}% - ${idealValues.P.max.toFixed(
+          2
+        )}%. Avoid excessive use of phosphorus fertilizers.`
+      );
+    }
 
-    if (sensorData.P < idealValues.P[0])
-      suggestions.push("Increase Phosphorus.");
-    if (sensorData.P > idealValues.P[1])
-      suggestions.push("Decrease Phosphorus.");
+    // Potassium (K)
+    if (sensorData.K < idealValues.K.min) {
+      suggestions.push(
+        `Increase Potassium: Current level is ${sensorData.K.toFixed(
+          2
+        )}%. Ideal range: ${idealValues.K.min.toFixed(
+          2
+        )}% - ${idealValues.K.max.toFixed(
+          2
+        )}%. Apply potassium-rich fertilizers such as potassium sulfate.`
+      );
+    }
+    if (sensorData.K > idealValues.K.max) {
+      suggestions.push(
+        `Decrease Potassium: Current level is ${sensorData.K.toFixed(
+          2
+        )}%. Ideal range: ${idealValues.K.min.toFixed(
+          2
+        )}% - ${idealValues.K.max.toFixed(
+          2
+        )}%. Consider adjusting your fertilizer regimen to reduce potassium levels.`
+      );
+    }
 
-    if (sensorData.K < idealValues.K[0])
-      suggestions.push("Increase Potassium.");
-    if (sensorData.K > idealValues.K[1])
-      suggestions.push("Decrease Potassium.");
+    // Temperature
+    if (sensorData.temperature < idealValues.temperature.min) {
+      suggestions.push(
+        `Increase temperature: Current temperature is ${Math.round(
+          sensorData.temperature
+        )}°C. Ideal range: ${Math.round(
+          idealValues.temperature.min
+        )}°C - ${Math.round(
+          idealValues.temperature.max
+        )}°C. Consider using row covers to retain heat.`
+      );
+    }
+    if (sensorData.temperature > idealValues.temperature.max) {
+      suggestions.push(
+        `Decrease temperature: Current temperature is ${Math.round(
+          sensorData.temperature
+        )}°C. Ideal range: ${Math.round(
+          idealValues.temperature.min
+        )}°C - ${Math.round(
+          idealValues.temperature.max
+        )}°C. Shade the plants to avoid overheating.`
+      );
+    }
 
-    if (sensorData.temperature < idealValues.temperature[0])
-      suggestions.push("Increase temperature (warm environment).");
-    if (sensorData.temperature > idealValues.temperature[1])
-      suggestions.push("Decrease temperature (cooling needed).");
+    // Humidity
+    if (sensorData.humidity < idealValues.humidity.min) {
+      suggestions.push(
+        `Increase humidity: Current humidity is ${Math.round(
+          sensorData.humidity
+        )}%. Ideal range: ${Math.round(
+          idealValues.humidity.min
+        )}% - ${Math.round(
+          idealValues.humidity.max
+        )}%. Consider using a humidifier or misting the plants.`
+      );
+    }
+    if (sensorData.humidity > idealValues.humidity.max) {
+      suggestions.push(
+        `Decrease humidity: Current humidity is ${Math.round(
+          sensorData.humidity
+        )}%. Ideal range: ${Math.round(
+          idealValues.humidity.min
+        )}% - ${Math.round(
+          idealValues.humidity.max
+        )}%. Ensure proper air circulation to reduce humidity.`
+      );
+    }
 
-    if (sensorData.humidity < idealValues.humidity[0])
-      suggestions.push("Increase humidity.");
-    if (sensorData.humidity > idealValues.humidity[1])
-      suggestions.push("Decrease humidity.");
-
-    if (sensorData.soilMoisture < 30)
+    // Soil Moisture (Handled separately, not from the CSV)
+    if (sensorData.soilMoisture < 30) {
       suggestions.push("Increase soil moisture (more watering).");
-    if (sensorData.soilMoisture > 70)
+    }
+    if (sensorData.soilMoisture > 70) {
       suggestions.push("Reduce soil moisture (less watering).");
+    }
 
     setAdjustments(
       suggestions.length > 0 ? suggestions.join(" ") : "Conditions are optimal."
@@ -108,113 +218,94 @@ function App() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-green-400 via-blue-500 to-purple-600">
-      <div className="w-full max-w-7xl p-6">
-        {/* Header */}
-        <h1 className="text-5xl font-bold text-center text-white mb-8">
-        🌱 Crop Management Dashboard
-        </h1>
+    <div className="container">
+      <h1 className="header">🌱 Crop Management Dashboard</h1>
 
-        {/* Sensor Cards Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-6 py-8">
-          {/* Temperature Card */}
-          <Card className="flex-col items-center w-full">
-            <Thermometer className="w-16 h-16 text-blue-600" />
-            <p className="mt-4 text-xl font-semibold">
-              Temperature: {sensorData.temperature}°C
-            </p>
-          </Card>
-          {/* Humidity Card */}
-          <Card className="flex-col items-center w-full">
-            <CloudRain className="w-16 h-16 text-green-600" />
-            <p className="mt-4 text-xl font-semibold">
-              Humidity: {sensorData.humidity}%
-            </p>
-          </Card>
-          {/* Soil Moisture Card */}
-          <Card className="flex-col items-center w-full">
-            <Droplet className="w-16 h-16 text-teal-600" />
-            <p className="mt-4 text-xl font-semibold">
-              Soil Moisture: {sensorData.soilMoisture}%
-            </p>
-          </Card>
-        </div>
+      {/* Sensor Cards Section */}
+      <div className="card-container">
+        <Card className="card">
+          <Thermometer className="card-icon" />
+          <p className="card-text">Temperature: {sensorData.temperature}°C</p>
+        </Card>
+        <Card className="card">
+          <CloudRain className="card-icon" />
+          <p className="card-text">Humidity: {sensorData.humidity}%</p>
+        </Card>
+        <Card className="card">
+          <Droplet className="card-icon" />
+          <p className="card-text">Soil Moisture: {sensorData.soilMoisture}%</p>
+        </Card>
+      </div>
 
-        {/* Nutrient Levels Chart Section */}
-        <div className="bg-white p-8 rounded-xl shadow-lg mb-8 w-full">
-          <h2 className="text-2xl font-bold mb-6">Nutrient Levels (N, P, K)</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart
-              data={[
-                { name: "N", value: sensorData.N },
-                { name: "P", value: sensorData.P },
-                { name: "K", value: sensorData.K },
-              ]}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="value" fill="#4CAF50" radius={[10, 10, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Recommended Crop Section */}
-        <div className="mb-8 w-full text-center">
-          <h2 className="text-2xl font-semibold">🌾 Recommended Crop</h2>
-          {recommendedCrop ? (
-            <p className="text-2xl font-bold">{recommendedCrop}</p>
-          ) : (
-            <p>Loading prediction...</p>
-          )}
-        </div>
-
-        {/* Watering Advice Section */}
-        <div className="mb-8 w-full text-center">
-          <h2 className="text-2xl font-semibold">🚰 Watering Advice</h2>
-          {sensorData.soilMoisture < 41 ? (
-            <p className="text-red-500 font-bold">
-              ⚠️ Soil moisture is too low! You need to water the crop.
-            </p>
-          ) : (
-            <p className="text-green-500 font-bold">
-              ✅ Soil moisture is at a healthy level.
-            </p>
-          )}
-        </div>
-
-        {/* Crop Selection Section */}
-        <div className="mb-8 w-full text-center">
-          <h2 className="text-2xl font-semibold">🌿 Choose a Crop</h2>
-          <select
-            onChange={(e) => setSelectedCrop(e.target.value)}
-            value={selectedCrop}
-            className="p-3 bg-white text-black border-2 rounded-lg mb-4"
+      {/* Nutrient Levels Chart */}
+      <div className="chart-container">
+        <h2 className="chart-heading">Nutrient Levels (N, P, K)</h2>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart
+            data={[
+              { name: "N", value: sensorData.N },
+              { name: "P", value: sensorData.P },
+              { name: "K", value: sensorData.K },
+            ]}
           >
-            <option value="">-- Select a Crop --</option>
-            {Object.keys(cropIdealConditions).map((crop) => (
-              <option key={crop} value={crop}>
-                {crop}
-              </option>
-            ))}
-          </select>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey="value" fill="#4CAF50" radius={[10, 10, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
 
-          <Button
-            onClick={calculateAdjustments}
-            className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-6 rounded-lg shadow-lg transition duration-300 ease-in-out"
-          >
-            Get Adjustments
-          </Button>
-        </div>
+      {/* Recommended Crop Section */}
+      <div className="text-center">
+        <h2 className="sub-heading">🌾 Recommended Crop</h2>
+        {recommendedCrop ? (
+          <p className="text-lg">{recommendedCrop}</p>
+        ) : (
+          <p>Loading prediction...</p>
+        )}
+      </div>
 
-        {/* Display Adjustments */}
-        {adjustments && (
-          <p className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-6 rounded-lg shadow-lg transition duration-300 ease-in-out transform hover:scale-105 mt-4">
-            🔧 Adjustments: {adjustments}
+      {/* Watering Advice Section */}
+      <div className="text-center">
+        <h2 className="sub-heading">🚰 Watering Advice</h2>
+        {sensorData.soilMoisture < 41 ? (
+          <p className="warning-text">
+            ⚠️ Soil moisture is too low! You need to water the crop.
+          </p>
+        ) : (
+          <p className="healthy-text">
+            ✅ Soil moisture is at a healthy level.
           </p>
         )}
       </div>
+
+      {/* Crop Selection Section */}
+      <div className="text-center">
+        <h2 className="sub-heading">🌿 Choose a Crop</h2>
+        <select
+          onChange={(e) => setSelectedCrop(e.target.value)}
+          value={selectedCrop}
+          className="select-box"
+        >
+          <option value="">-- Select a Crop --</option>
+          {Object.keys(cropIdealConditions).map((crop) => (
+            <option key={crop} value={crop}>
+              {crop}
+            </option>
+          ))}
+        </select>
+
+        <Button onClick={calculateAdjustments} className="button">
+          Get Adjustments
+        </Button>
+      </div>
+
+      {/* Display Adjustments */}
+      {adjustments && (
+        <p className="adjustments">🔧 Adjustments: {adjustments}</p>
+      )}
     </div>
   );
 }
