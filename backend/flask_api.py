@@ -2,7 +2,7 @@ import pandas as pd
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import tensorflow as tf
-import numpy as np
+import numpy as np 
 from sklearn.preprocessing import LabelEncoder
 
 app = Flask(__name__)
