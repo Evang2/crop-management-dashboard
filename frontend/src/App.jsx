@@ -11,23 +11,28 @@ import {
 } from "recharts";
 import { Button } from "./components/ui/Button";
 import { Card } from "./components/ui/Card";
-import { Droplet, Thermometer, CloudRain } from "lucide-react";
+import { Droplet, Thermometer, CloudRain, RefreshCw } from "lucide-react";
+import SensorDataHistory from "./SensorDataHistory";
 
 function App() {
-  const [sensorData] = useState({
-    N: 50,
-    P: 30,
-    K: 20,
-    temperature: 25,
-    humidity: 50,
-    soilMoisture: 35,
+  const [sensorData, setSensorData] = useState({
+    N: 0,
+    P: 0,
+    K: 0,
+    temperature: 0,
+    humidity: 0,
+    soilMoisture: 0,
   });
 
   const [recommendedCrop, setRecommendedCrop] = useState(null);
   const [selectedCrop, setSelectedCrop] = useState("");
   const [adjustments, setAdjustments] = useState("");
   const [cropIdealConditions, setCropIdealConditions] = useState({});
+  const [isLive, setIsLive] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState(null);
 
+  // Fetch ideal conditions for crops
   useEffect(() => {
     axios
       .get("http://127.0.0.1:5001/ideal_conditions")
@@ -35,6 +40,7 @@ function App() {
       .catch((err) => console.error("Error fetching ideal conditions:", err));
   }, []);
 
+  // Prediction function
   const fetchPrediction = useCallback(async () => {
     try {
       const requestData = { ...sensorData };
@@ -48,16 +54,59 @@ function App() {
       } else {
         setRecommendedCrop("Error: No crop received");
       }
-      // eslint-disable-next-line no-unused-vars
     } catch (err) {
       setRecommendedCrop("Error fetching prediction");
+      console.error("Prediction error:", err);
     }
   }, [sensorData]);
 
+  // Initial prediction on component mount
   useEffect(() => {
     fetchPrediction();
   }, [fetchPrediction]);
 
+  // Function to fetch latest sensor data
+  const fetchLatestSensorData = useCallback(async () => {
+    if (!isLive && !loading) return;
+    
+    try {
+      setLoading(true);
+      const response = await axios.get("http://127.0.0.1:5001/latest_sensor_data");
+      
+      if (response.data && Object.keys(response.data).length > 0) {
+        // Update state with new sensor data
+        setSensorData(response.data);
+        setLastUpdated(new Date());
+        
+        // Trigger prediction with new data
+        await fetchPrediction();
+      }
+    } catch (err) {
+      console.error("Error fetching latest sensor data:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [isLive, loading, fetchPrediction]);
+
+  // Set up polling for live data
+  useEffect(() => {
+    // Initial fetch
+    if (isLive) {
+      fetchLatestSensorData();
+    }
+    
+    // Set up interval for live data updates
+    const intervalId = setInterval(() => {
+      if (isLive) {
+        fetchLatestSensorData();
+      }
+    }, 10000); // every 10 seconds
+    
+    // Clean up interval on component unmount or when isLive changes
+    return () => clearInterval(intervalId);
+  }, [isLive, fetchLatestSensorData]);
+
+  // Function to calculate adjustments based on selected crop
   const calculateAdjustments = () => {
     if (!selectedCrop || !cropIdealConditions[selectedCrop]) {
       setAdjustments("No specific adjustments available.");
@@ -84,6 +133,7 @@ function App() {
       temperature: ideal.temperature,
       humidity: ideal.humidity,
     };
+    
     // Nitrogen (N)
     if (sensorData.N < idealValues.N.min) {
       suggestions.push(
@@ -217,9 +267,39 @@ function App() {
     );
   };
 
+  // Manual refresh function
+  const handleManualRefresh = async () => {
+    await fetchLatestSensorData();
+  };
+
   return (
     <div className="container">
       <h1 className="header">🌱 Crop Management Dashboard</h1>
+      
+      {/* Live Data Control */}
+      <div className="live-data-control">
+        <Button 
+          onClick={() => setIsLive(!isLive)} 
+          className={`button ${isLive ? 'active' : ''}`}
+        >
+          {isLive ? '⚫ Live Data On' : '⚪ Live Data Off'}
+        </Button>
+        
+        <Button 
+          onClick={handleManualRefresh} 
+          className="button refresh-button"
+          disabled={loading}
+        >
+          <RefreshCw className={loading ? 'spinning' : ''} size={16} />
+          Refresh Now
+        </Button>
+        
+        {lastUpdated && (
+          <span className="last-updated">
+            Last updated: {lastUpdated.toLocaleTimeString()}
+          </span>
+        )}
+      </div>
 
       {/* Sensor Cards Section */}
       <div className="card-container">
@@ -308,11 +388,15 @@ function App() {
 
         {/* Display Adjustments */}
         {adjustments && (
-          <p className="adjustments">
-            <b>🔧 Adjustments:</b> {adjustments}
-          </p>
+          <div className="adjustments-container">
+            <h3 className="adjustments-heading">🔧 Adjustments:</h3>
+            <p className="adjustments">{adjustments}</p>
+          </div>
         )}
       </div>
+      
+      {/* Historical Data Section */}
+      <SensorDataHistory />
     </div>
   );
 }
