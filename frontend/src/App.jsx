@@ -8,10 +8,23 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  LineChart,
+  Line,
 } from "recharts";
 import { Button } from "./components/ui/Button";
 import { Card } from "./components/ui/Card";
-import { Droplet, Thermometer, CloudRain, RefreshCw } from "lucide-react";
+import { 
+  Droplet, 
+  Thermometer, 
+  CloudRain, 
+  RefreshCw, 
+  Leaf, 
+  AlertTriangle, 
+  CheckCircle, 
+  TrendingUp,
+  TrendingDown,
+  Layers
+} from "lucide-react";
 import SensorDataHistory from "./SensorDataHistory";
 
 function App() {
@@ -254,16 +267,16 @@ function App() {
       );
     }
 
-    // Soil Moisture (Handled separately, not from the CSV)
+    // Soil Moisture
     if (sensorData.soilMoisture < 30) {
-      suggestions.push("Increase soil moisture (more watering).");
+      suggestions.push(`Increase soil moisture: Current level is ${Math.round(sensorData.soilMoisture)}%. Recommended: 30-70%. Increase watering frequency.`);
     }
     if (sensorData.soilMoisture > 70) {
-      suggestions.push("Reduce soil moisture (less watering).");
+      suggestions.push(`Reduce soil moisture: Current level is ${Math.round(sensorData.soilMoisture)}%. Recommended: 30-70%. Reduce watering frequency.`);
     }
 
     setAdjustments(
-      suggestions.length > 0 ? suggestions.join(" ") : "Conditions are optimal."
+      suggestions.length > 0 ? suggestions.join(" ") : "All conditions are optimal for this crop."
     );
   };
 
@@ -272,9 +285,36 @@ function App() {
     await fetchLatestSensorData();
   };
 
+  // Custom tooltip for nutrient chart
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div style={{
+          backgroundColor: "#fff",
+          padding: "10px",
+          border: "1px solid #ccc",
+          borderRadius: "5px"
+        }}>
+          <p><strong>{payload[0].name}</strong>: {payload[0].value.toFixed(2)}%</p>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  // Format Nutrient data for chart
+  const nutrientData = [
+    { name: "Nitrogen (N)", value: sensorData.N, fill: "#4c956c" },
+    { name: "Phosphorus (P)", value: sensorData.P, fill: "#2c6e49" },
+    { name: "Potassium (K)", value: sensorData.K, fill: "#224d36" },
+  ];
+
   return (
     <div className="container">
-      <h1 className="header">🌱 Crop Management Dashboard</h1>
+      <h1 className="header">
+        <Leaf size={32} />
+        Crop Management Dashboard
+      </h1>
       
       {/* Live Data Control */}
       <div className="live-data-control">
@@ -282,7 +322,7 @@ function App() {
           onClick={() => setIsLive(!isLive)} 
           className={`button ${isLive ? 'active' : ''}`}
         >
-          {isLive ? '⚫ Live Data On' : '⚪ Live Data Off'}
+          {isLive ? '● Live Data' : '○ Live Data'}
         </Button>
         
         <Button 
@@ -291,7 +331,7 @@ function App() {
           disabled={loading}
         >
           <RefreshCw className={loading ? 'spinning' : ''} size={16} />
-          Refresh Now
+          Refresh
         </Button>
         
         {lastUpdated && (
@@ -305,34 +345,45 @@ function App() {
       <div className="card-container">
         <Card className="card">
           <Thermometer className="card-icon" />
-          <p className="card-text">Temperature: {sensorData.temperature}°C</p>
+          <p className="card-text">Temperature</p>
+          <p className="text-lg">{sensorData.temperature}°C</p>
         </Card>
         <Card className="card">
           <CloudRain className="card-icon" />
-          <p className="card-text">Humidity: {sensorData.humidity}%</p>
+          <p className="card-text">Humidity</p>
+          <p className="text-lg">{sensorData.humidity}%</p>
         </Card>
         <Card className="card">
           <Droplet className="card-icon" />
-          <p className="card-text">Soil Moisture: {sensorData.soilMoisture}%</p>
+          <p className="card-text">Soil Moisture</p>
+          <p className="text-lg">{sensorData.soilMoisture}%</p>
         </Card>
       </div>
 
       {/* Nutrient Levels Chart */}
       <div className="chart-container">
-        <h2 className="chart-heading">Nutrient Levels (N, P, K)</h2>
+        <h2 className="chart-heading">
+          <Layers size={20} style={{ verticalAlign: 'middle', marginRight: '8px' }} />
+          Nutrient Levels
+        </h2>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart
-            data={[
-              { name: "N", value: sensorData.N },
-              { name: "P", value: sensorData.P },
-              { name: "K", value: sensorData.K },
-            ]}
+            data={nutrientData}
+            margin={{ top: 10, right: 30, left: 0, bottom: 20 }}
           >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Bar dataKey="value" fill="#4CAF50" radius={[10, 10, 0, 0]} />
+            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+            <XAxis 
+              dataKey="name" 
+              tick={{ fontSize: 12 }}
+              tickLine={false}
+            />
+            <YAxis 
+              tick={{ fontSize: 12 }}
+              tickLine={false}
+              axisLine={false}
+            />
+            <Tooltip content={<CustomTooltip />} />
+            <Bar dataKey="value" fill="#4c956c" radius={[8, 8, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -341,56 +392,97 @@ function App() {
       <div className="card-container2">
         {/* Recommended Crop Section */}
         <div className="card2">
-          <h2 className="sub-heading">🌾 Recommended Crop</h2>
+          <h2 className="sub-heading">
+            <Leaf size={20} style={{ verticalAlign: 'middle', marginRight: '8px' }} />
+            Recommended Crop
+          </h2>
           {recommendedCrop ? (
             <p className="text-lg">{recommendedCrop}</p>
           ) : (
-            <p>Loading prediction...</p>
+            <p className="loading-text">Analyzing soil conditions...</p>
           )}
         </div>
 
         {/* Watering Advice Section */}
         <div className="card2">
-          <h2 className="sub-heading">🚰 Watering Advice</h2>
-          {sensorData.soilMoisture < 41 ? (
+          <h2 className="sub-heading">
+            <Droplet size={20} style={{ verticalAlign: 'middle', marginRight: '8px' }} />
+            Watering Advice
+          </h2>
+          {sensorData.soilMoisture < 30 ? (
             <p className="warning-text">
-              ⚠️ Soil moisture is too low! You need to water the crop.
+              <AlertTriangle size={18} />
+              Soil moisture is too low! Watering needed.
+            </p>
+          ) : sensorData.soilMoisture > 70 ? (
+            <p className="warning-text">
+              <AlertTriangle size={18} />
+              Soil moisture is too high! Reduce watering.
             </p>
           ) : (
             <p className="healthy-text">
-              ✅ Soil moisture is at a healthy level.
+              <CheckCircle size={18} />
+              Soil moisture is at a healthy level.
             </p>
           )}
         </div>
       </div>
 
       {/* Crop Selection Section */}
-      <div className="card-container2">
-        <div className="card2">
-          <h2 className="sub-heading">🌿 Choose a Crop</h2>
-          <select
-            onChange={(e) => setSelectedCrop(e.target.value)}
-            value={selectedCrop}
-            className="select-box"
-          >
-            <option value="">-- Select a Crop --</option>
-            {Object.keys(cropIdealConditions).map((crop) => (
-              <option key={crop} value={crop}>
-                {crop}
-              </option>
-            ))}
-          </select>
+      <div className="card2">
+        <h2 className="sub-heading">
+          <Leaf size={20} style={{ verticalAlign: 'middle', marginRight: '8px' }} />
+          Crop Adjustment Calculator
+        </h2>
+        <select
+          onChange={(e) => setSelectedCrop(e.target.value)}
+          value={selectedCrop}
+          className="select-box"
+        >
+          <option value="">-- Select a Crop --</option>
+          {Object.keys(cropIdealConditions).sort().map((crop) => (
+            <option key={crop} value={crop}>
+              {crop}
+            </option>
+          ))}
+        </select>
 
-          <Button onClick={calculateAdjustments} className="button">
-            Get Adjustments
-          </Button>
-        </div>
+        <Button onClick={calculateAdjustments} className="button">
+          Calculate Adjustments
+        </Button>
 
         {/* Display Adjustments */}
         {adjustments && (
           <div className="adjustments-container">
-            <h3 className="adjustments-heading">🔧 Adjustments:</h3>
-            <p className="adjustments">{adjustments}</p>
+            <h3 className="adjustments-heading">
+              {adjustments.includes("optimal") ? (
+                <>
+                  <CheckCircle size={18} style={{ verticalAlign: 'middle', marginRight: '8px' }} />
+                  Conditions Assessment
+                </>
+              ) : (
+                <>
+                  <AlertTriangle size={18} style={{ verticalAlign: 'middle', marginRight: '8px' }} />
+                  Recommended Adjustments
+                </>
+              )}
+            </h3>
+            <div className="adjustments">
+              {adjustments.split(". ").map((adjustment, index) => (
+                adjustment && (
+                  <p key={index} style={{ margin: '8px 0' }}>
+                    {adjustment.includes("Increase") ? (
+                      <TrendingUp size={16} style={{ verticalAlign: 'middle', marginRight: '8px', color: '#4c956c' }} />
+                    ) : adjustment.includes("Decrease") || adjustment.includes("Reduce") ? (
+                      <TrendingDown size={16} style={{ verticalAlign: 'middle', marginRight: '8px', color: '#d62828' }} />
+                    ) : (
+                      <CheckCircle size={16} style={{ verticalAlign: 'middle', marginRight: '8px', color: '#5cb85c' }} />
+                    )}
+                    {adjustment + (adjustment.endsWith('.') ? '' : '.')}
+                  </p>
+                )
+              ))}
+            </div>
           </div>
         )}
       </div>
