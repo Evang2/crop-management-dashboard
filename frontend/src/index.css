@@ -15,7 +15,8 @@
 }
 
 body {
-  font-family: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: "Inter", "SF Pro Display", -apple-system, BlinkMacSystemFont,
+    sans-serif;
   background-color: #f8f9fa;
   color: var(--text);
   margin: 0;
@@ -58,55 +59,12 @@ body {
   color: var(--text-light);
 }
 
-/* Button Styling */
-/* .button {
-  padding: 0.75rem 1.25rem;
-  background-color: var(--primary);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 0.9rem;
-  transition: var(--transition);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-} 
-.button {
-  
-  padding: 0.75rem 1.25rem;
-  border-radius: 6px;
-  border: none;
-  color: #fff;
-  cursor: pointer;
-  background-color:rgba(44, 110, 73, 0.1);
-  transition: all 0.2s ease;
-}
-.button:hover {
-  background-color: var(--primary-dark);
-  transform: translateY(-2px);
-}
-
-.button.active {
-  background-color: var(--primary-dark);
-}
-
-.button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-*/
-/* From Uiverse.io by e-coders */ 
 button {
   appearance: none;
   background-color: #fafbfc;
   border: 1px solid rgba(27, 31, 35, 0.15);
   border-radius: 6px;
-  box-shadow:
-    rgba(27, 31, 35, 0.04) 0 1px 0,
+  box-shadow: rgba(27, 31, 35, 0.04) 0 1px 0,
     rgba(255, 255, 255, 0.25) 0 1px 0 inset;
   box-sizing: border-box;
   color: #24292e;
@@ -173,12 +131,17 @@ button:-webkit-details-marker {
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Card Containers */
-.card-container, .card-container2 {
+.card-container,
+.card-container2 {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1.5rem;
@@ -186,7 +149,8 @@ button:-webkit-details-marker {
 }
 
 /* Card Styling */
-.card, .card2 {
+.card,
+.card2 {
   background-color: var(--secondary);
   border-radius: var(--border-radius);
   padding: 1.5rem;
@@ -201,7 +165,8 @@ button:-webkit-details-marker {
   text-align: center;
 }
 
-.card:hover, .card2:hover {
+.card:hover,
+.card2:hover {
   transform: translateY(-4px);
   box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
 }
@@ -349,7 +314,8 @@ button:-webkit-details-marker {
   text-align: center;
 }
 
-.loading-text, .no-data-text {
+.loading-text,
+.no-data-text {
   text-align: center;
   color: var(--text-light);
   padding: 2rem;
@@ -360,22 +326,22 @@ button:-webkit-details-marker {
   .container {
     padding: 1rem;
   }
-  
+
   .header {
     font-size: 2rem;
   }
-  
+
   .live-data-control {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .last-updated {
     margin-left: 0;
     margin-top: 0.5rem;
     text-align: center;
   }
-  
+
   .charts-grid {
     grid-template-columns: 1fr;
   }
@@ -385,8 +351,9 @@ button:-webkit-details-marker {
   .header {
     font-size: 1.75rem;
   }
-  
-  .card-container, .card-container2 {
+
+  .card-container,
+  .card-container2 {
     grid-template-columns: 1fr;
   }
 }
