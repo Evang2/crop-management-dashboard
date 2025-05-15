@@ -1,14 +1,17 @@
-# Crop Management Dashboard
+# Crop Management Dashboard🌾
 
 
-A Smart Agriculture System for Data-Driven Crop Management Using IoT and AI
+🌱 <b> A Smart Agriculture System for Data-Driven Crop Management Using IoT and AI </b>
 
 The Crop Management Dashboard is a web-based platform designed to enhance agricultural productivity and sustainability through real-time environmental monitoring and AI-driven decision support. Developed as part of a BSc (Hons) Computer Science thesis at the University of East London, this project integrates Arduino-based sensors and machine learning to provide farmers with actionable insights for optimizing irrigation, fertilization, and crop selection.
 
 This repository contains the source code for the dashboard, including hardware configurations, backend APIs, machine learning models, and the frontend interface. The system is detailed in the thesis titled "Smart Agriculture: A Data-Driven Decision Support System Using Arduino and AI for Optimized Crop Management" by Andreas Evangeliou.
 
+### ⚠️ Disclaimer:
+This project is a prototype developed for academic purposes as part of a thesis. It is not intended for production use and should be considered experimental. Users should exercise caution and validate results before applying them in real-world agricultural settings. The system is detailed in the thesis titled "Smart Agriculture: A Data-Driven Decision Support System Using Arduino and AI for Optimized Crop Management" by Andreas Evangeliou.
+
 ----------
-## Table of Contents
+## Table of Contents📋 
 - Features
 - Technologies
 - Hardware
@@ -18,16 +21,16 @@ This repository contains the source code for the dashboard, including hardware c
 - License
 - Contact
 ----------
-## Features
+## Features🚀
 
-- <b> Real-Time Monitoring: </b> Collects data on soil moisture, NPK (Nitrogen, Phosphorus, Potassium) levels, temperature, and humidity using Arduino-based sensors.
-- <b> AI-Driven Crop Recommendations: </b> Utilizes a deep learning neural network (TensorFlow) to recommend optimal crops based on soil and climate conditions, achieving ~94% accuracy.
-- <b> Interactive Dashboard: </b> Visualizes sensor data, historical trends, and crop recommendations through dynamic charts and alerts using React.js.
-- <b> Resource Optimization: </b> Provides data-driven suggestions to minimize water and fertilizer waste, promoting sustainable farming practices.
-- <b> Scalable Architecture: </b> Modular design supports small- and large-scale farming with potential for additional sensors (e.g., pH, weather).
-- <b> Ethical Design: </b> Ensures data privacy, low-energy hardware, and compliance with EU regulations (GDPR, WEEE Directive).
+- <b> Real-Time Monitoring📡: </b> Collects data on soil moisture, NPK (Nitrogen, Phosphorus, Potassium) levels, temperature, and humidity using Arduino-based sensors.
+- <b> AI-Driven Crop Recommendations🤖: </b> Utilizes a deep learning neural network (TensorFlow) to recommend optimal crops based on soil and climate conditions, achieving ~94% accuracy.
+- <b> Interactive Dashboard📊: </b> Visualizes sensor data, historical trends, and crop recommendations through dynamic charts and alerts using React.js.
+- <b> Resource Optimization💧: </b> Provides data-driven suggestions to minimize water and fertilizer waste, promoting sustainable farming practices.
+- <b> Scalable Architecture💻: </b> Modular design supports small- and large-scale farming with potential for additional sensors (e.g., pH, weather).
+- <b> Ethical Design🌍: </b> Ensures data privacy, low-energy hardware, and compliance with EU regulations (GDPR, WEEE Directive).
 -----------
-## Technologies
+## Technologies🛠️
 | Layer          | Technology                           |
 | -------------- | ------------------------------------ |
 | Frontend       |  React.js / Vite / CSS               |
@@ -39,7 +42,7 @@ This repository contains the source code for the dashboard, including hardware c
 |Version Control |Git, GitHub                           |
 |Development Environment| VS Code / Arduino IDE / Windows 11|
 
-## Hardware
+## Hardware🔌
 
 The system uses the following hardware components:
 - <b> Arduino Uno R4 WiFi: </b> Microcontroller for sensor data collection and transmission.
@@ -50,7 +53,7 @@ The system uses the following hardware components:
 
 --------------
 
-## Installation
+## Installation🔧
 
 Prerequisites:
 - Software:
@@ -66,31 +69,31 @@ Prerequisites:
   - DHT11 Temperature & Humidity Sensor
   - PM14058 TTL to RS485 Converter Module
   - Jumper wires and breadboard
+    
+### Steps
 
-## Steps
-
-### 1. Clone the Repository:
+#### 1. Clone the Repository:
 ````
 git clone https://github.com/Evang2/crop-management-dashboard.git
 cd crop-management-dashboard
 ````
 
-### 2. Set Up Hardware:
+#### 2. Set Up Hardware:
 - Connect sensors to the Arduino Uno R4 as per the connection diagram in the thesis (Figure 2, Chapter 3.4.2).
 - Upload the Arduino code to the microcontroller using Arduino IDE.
 
-### 3. Install Backend Dependencies:
+#### 3. Install Backend Dependencies:
 ````
 cd server
 pip install -r requirements.txt
 ````
 
-### 4. Install Frontend Dependencies:
+#### 4. Install Frontend Dependencies:
 ````
 cd frontend
 npm install
 ````
-### 5. Run the Application:
+#### 5. Run the Application:
 - Start the backend server:
 ````
 cd backend
@@ -102,7 +105,7 @@ cd frontend
 npm run dev
 ````
 
-### 6. Access the Dashboard:
+#### 6. Access the Dashboard:
 - Open your browser and navigate to http://localhost:5173 (or the port specified by Vite).
 
 ![Screenshot 2025-03-21 135940](https://github.com/user-attachments/assets/ef87de6f-eeec-4be9-a4b3-35917fdd0c13)
@@ -115,18 +118,16 @@ npm run dev
 
 -----------
 
-## Usage
-- <b> Deploy Sensors: </b> Place sensors in the soil and ensure proper connection to the Arduino.
-- <b> Monitor Data: </b> Access the dashboard to view real-time sensor readings (NPK, moisture, temperature, humidity).
-- <b> Receive Recommendations: </b> The AI model analyzes sensor data and suggests optimal crops (e.g., rice, coffee) based on current conditions.
-- <b> Optimize Resources: </b> Follow dashboard alerts for irrigation and fertilization to reduce waste.
-- <b> Analyze Trends: </b> Use historical data visualizations to track soil and climate trends.
+## Usage📈
+- <b> Deploy Sensors🌱: </b> Place sensors in the soil and ensure proper connection to the Arduino.
+- <b> Monitor Data📡: </b> Access the dashboard to view real-time sensor readings (NPK, moisture, temperature, humidity).
+- <b> Receive Recommendations🤖: </b> The AI model analyzes sensor data and suggests optimal crops (e.g., rice, coffee) based on current conditions.
+- <b> Optimize Resources💧: </b> Follow dashboard alerts for irrigation and fertilization to reduce waste.
+- <b> Analyze Trends📊: </b> Use historical data visualizations to track soil and climate trends.
 
-## License
-This project is licensed under the MIT License. See the LICENSE file for details.
+-----------
 
-
-## Thesis Context
+## Thesis Context📚
 This project is the practical component of a thesis submitted for the BSc (Hons) Computer Science degree at the University of East London (Metropolitan College), supervised by Dr. Vasileios Stefanidis. The thesis explores the integration of IoT and AI in smart agriculture, addressing challenges like resource efficiency and sustainability.
 <b> Key findings include: </b>
 - ~94% accuracy in crop recommendations using a deep learning neural network.
@@ -134,3 +135,11 @@ This project is the practical component of a thesis submitted for the BSc (Hons)
 - Scalability for diverse agricultural environments.
 
 The full thesis document is available upon request or via the university’s repository (Greek only).
+
+-----------
+
+## License 📜
+This project is licensed under the MIT License. See the LICENSE file for details.
+
+-----------
+
