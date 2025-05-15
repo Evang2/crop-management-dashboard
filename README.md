@@ -142,4 +142,8 @@ The full thesis document is available upon request or via the university’s rep
 This project is licensed under the MIT License. See the LICENSE file for details.
 
 -----------
-
+## Contact 📧
+For inquiries or feedback:
+- Author: Andreas Evangeliou
+- GitHub: Evang2
+- Email: evangeliouandreas@gmail.com
